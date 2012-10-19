@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mule xmlns="http://www.mulesoft.org/schema/mule/core"
+      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xmlns:http="http://www.mulesoft.org/schema/mule/http"
+      xmlns:zeromq="http://www.mulesoft.org/schema/mule/zeromq"
+      xmlns:protobuf="http://www.mulesoft.org/schema/mule/protobuf"
+      xsi:schemaLocation="
+        http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/3.3/mule.xsd
+        http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/3.3/mule-http.xsd
+        http://www.mulesoft.org/schema/mule/zeromq http://www.mulesoft.org/schema/mule/zeromq/1.1-SNAPSHOT/mule-zeromq.xsd
+        http://www.mulesoft.org/schema/mule/protobuf http://www.mulesoft.org/schema/mule/protobuf/current/mule-protobuf.xsd
+        ">
+
+    <flow name="main">
+        <zeromq:inbound-endpoint address="tcp://*:9090" socket-operation="bind"
+                                 exchange-pattern="request-response"/>
+        <protobuf:deserialize
+                protobufClass="com.acmesoft.stock.model.serialization.protobuf.StockQuoteRequestBuffer"/>
+        <expression-transformer
+                expression="com.acmesoft.stock.model.StockQuoteRequest.fromProtocolBuffer(payload)"/>
+        <component class="com.acmesoft.stock.service.StockDataService"/>
+        <expression-transformer
+                expression="return com.acmesoft.stock.model.StockQuote.toProtocolBuffer(payload)"/>
+
+    </flow>
+</mule>

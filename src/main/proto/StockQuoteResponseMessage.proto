@@ -1,0 +1,21 @@
+package com.acmesoft.zeromq;
+
+option java_package = "com.acmesoft.stock.model.serialization.protobuf";
+option optimize_for = SPEED;
+
+option java_multiple_files = true;
+
+message StockQuoteResponseBuffer {
+   repeated StockQuoteBuffer result = 1;
+}
+
+message StockQuoteBuffer {
+  required string symbol = 1;
+  required int64 date = 2;
+  required double open = 3;
+  required double high = 4;
+  required double low = 5;
+  required double close = 6;
+  required int64 volume = 7;
+  required double adjustedClose = 8;
+}
